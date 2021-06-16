@@ -9,3 +9,5 @@ Contains intstructions for building each environment from Dockerfiles
 [aln2type](aln2type/)
 
 [viridian](viridian_workflow/)
+
+[OCI_object_HRR](OCI_object_HRR/)
