@@ -6,6 +6,6 @@ Contains intstructions for building each environment from Dockerfiles
 
 [Nextclade](nextclade/)
 
-[aln2type](al2ntype/)
+[aln2type](aln2type/)
 
 [viridian](viridian_workflow/)
