@@ -1,6 +1,6 @@
 # SARS-COV-2_environments
 
-Contains intstructions for building each environment from Dockerfiles
+Contains intstructions for building each environment from Dockerfiles or Singularity definitions.
 
 [Pangolin](pango/)
 
