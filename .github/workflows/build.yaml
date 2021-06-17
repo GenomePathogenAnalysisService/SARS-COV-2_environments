@@ -1,0 +1,139 @@
+name: Build SARS-COVID images
+
+on: [push]
+
+jobs:
+  build-aln2type-docker:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      -
+        name: Login to DockerHub
+        uses: docker/login-action@v1 
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      -
+        name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          context: aln2type
+          repository: oxfordmmm/aln2type
+          tags: oxfordmmm/aln2type:latest
+          push: true
+      -
+        name: Docker digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
+
+  build-aln2type-sing:
+    runs-on: ubuntu-latest
+    needs: build-aln2type-docker
+    strategy:
+      matrix:
+        singularity_version:
+          - '3.5.3'
+    container:
+      image: quay.io/singularity/singularity:v${{ matrix.singularity_version }}
+      options: --privileged
+    steps:
+      - uses: actions/checkout@v2
+      - 
+        name: build singularity
+        run: singularity build aln2type.sif docker://oxfordmmm/aln2type:latest
+
+  build-nextclade-sing:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        singularity_version:
+          - '3.5.3'
+    container:
+      image: quay.io/singularity/singularity:v${{ matrix.singularity_version }}
+      options: --privileged
+    steps:
+      - uses: actions/checkout@v2
+      - 
+        name: build singularity
+        run: singularity build nextclade.sif docker://neherlab/nextclade:latest
+  
+  build-oci-docker:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      -
+        name: Login to DockerHub
+        uses: docker/login-action@v1 
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      -
+        name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          context: OCI_object_HRR
+          repository: oxfordmmm/oci_pipeline
+          tags: oxfordmmm/oci_pipeline:latest
+          push: true
+      -
+        name: Docker digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
+
+  build-oci-sing:
+    runs-on: ubuntu-latest
+    needs: build-oci-docker
+    strategy:
+      matrix:
+        singularity_version:
+          - '3.5.3'
+    container:
+      image: quay.io/singularity/singularity:v${{ matrix.singularity_version }}
+      options: --privileged
+    steps:
+      - uses: actions/checkout@v2
+      - 
+        name: build singularity
+        run: singularity build oci_pipeline.sif docker://oxfordmmm/oci_pipeline:latest
+  
+  build-pango-docker:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      -
+        name: Login to DockerHub
+        uses: docker/login-action@v1 
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      -
+        name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          context: pango
+          repository: oxfordmmm/pango
+          tags: oxfordmmm/pango:latest
+          push: true
+      -
+        name: Docker digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
+
+  build-pango-sing:
+    runs-on: ubuntu-latest
+    needs: build-pango-docker
+    strategy:
+      matrix:
+        singularity_version:
+          - '3.5.3'
+    container:
+      image: quay.io/singularity/singularity:v${{ matrix.singularity_version }}
+      options: --privileged
+    steps:
+      - uses: actions/checkout@v2
+      - 
+        name: build singularity
+        run: singularity build pango.sif docker://oxfordmmm/oci_pipeline:latest
