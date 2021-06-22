@@ -11,3 +11,5 @@ Contains intstructions for building each environment from Dockerfiles or Singula
 [viridian](viridian_workflow/)
 
 [OCI_object_HRR](OCI_object_HRR/)
+
+[FN4_upload](FN4upload/)
