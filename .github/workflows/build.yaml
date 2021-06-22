@@ -1,6 +1,9 @@
 name: Build SARS-COVID images
 
-on: [push]
+on:
+  push:
+    tags:
+      - 'v*.*.*'
 
 jobs:
   build-aln2type-docker:
@@ -8,6 +11,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      - name: Set release version
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
       -
         name: Login to DockerHub
         uses: docker/login-action@v1 
@@ -20,8 +25,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: aln2type
-          repository: oxfordmmm/aln2type
-          tags: oxfordmmm/aln2type:latest
+          tags: oxfordmmm/aln2type:latest, oxfordmmm/aln2type:${{env.RELEASE_VERSION}}
           push: true
       -
         name: Docker digest
@@ -39,9 +43,11 @@ jobs:
       options: --privileged
     steps:
       - uses: actions/checkout@v2
+      - name: Set release version
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
       - 
         name: build singularity
-        run: singularity build aln2type.sif docker://oxfordmmm/aln2type:latest
+        run: singularity build aln2type_${{env.RELEASE_VERSION}}.sif docker://oxfordmmm/aln2type:${{env.RELEASE_VERSION}}
 
   build-nextclade-sing:
     runs-on: self-hosted
@@ -54,15 +60,19 @@ jobs:
       options: --privileged
     steps:
       - uses: actions/checkout@v2
+      - name: Set release version
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
       - 
         name: build singularity
-        run: singularity build nextclade.sif docker://neherlab/nextclade:latest
+        run: singularity build nextclade_${{env.RELEASE_VERSION}}.sif docker://neherlab/nextclade:latest
   
   build-oci-docker:
     runs-on: self-hosted
 
     steps:
       - uses: actions/checkout@v2
+      - name: Set release version
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
       -
         name: Login to DockerHub
         uses: docker/login-action@v1 
@@ -75,8 +85,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: OCI_object_HRR
-          repository: oxfordmmm/oci_pipeline
-          tags: oxfordmmm/oci_pipeline:latest
+          tags: oxfordmmm/oci_pipeline:latest, oxfordmmm/oci_pipeline:${{env.RELEASE_VERSION}}
           push: true
       -
         name: Docker digest
@@ -94,15 +103,19 @@ jobs:
       options: --privileged
     steps:
       - uses: actions/checkout@v2
+      - name: Set release version
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
       - 
         name: build singularity
-        run: singularity build oci_pipeline.sif docker://oxfordmmm/oci_pipeline:latest
+        run: singularity build oci_pipeline_${{env.RELEASE_VERSION}}.sif docker://oxfordmmm/oci_pipeline:${{env.RELEASE_VERSION}}
   
   build-pango-docker:
     runs-on: self-hosted
 
     steps:
       - uses: actions/checkout@v2
+      - name: Set release version
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
       -
         name: Login to DockerHub
         uses: docker/login-action@v1 
@@ -115,8 +128,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: pango
-          repository: oxfordmmm/pango
-          tags: oxfordmmm/pango:latest
+          tags: oxfordmmm/pango:latest, oxfordmmm/pango:${{env.RELEASE_VERSION}}
           push: true
       -
         name: Docker digest
@@ -134,6 +146,8 @@ jobs:
       options: --privileged
     steps:
       - uses: actions/checkout@v2
+      - name: Set release version
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
       - 
         name: build singularity
-        run: singularity build pango.sif docker://oxfordmmm/oci_pipeline:latest
+        run: singularity build pango_${{env.RELEASE_VERSION}}.sif docker://oxfordmmm/pango:${{env.RELEASE_VERSION}}
