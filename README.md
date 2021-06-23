@@ -19,3 +19,5 @@ singularity build viridian_workflow.img Singularity.def
 ```
 
 [OCI_object_HRR](OCI_object_HRR/)
+
+[FN4_upload](FN4upload/)
