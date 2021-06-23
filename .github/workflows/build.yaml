@@ -199,9 +199,64 @@ jobs:
           name: pango
           path: pango_*.sif
   
+  build-fn4-docker:
+    runs-on: self-hosted
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set release version
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+      -
+        name: Login to DockerHub
+        uses: docker/login-action@v1 
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      -
+        name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          context: FN4upload
+          tags: oxfordmmm/fn4_upload:latest, oxfordmmm/fn4_upload:${{env.RELEASE_VERSION}}
+          push: true
+          no-cache: true
+      -
+        name: Docker digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
+
+  build-fn4-sing:
+    runs-on: self-hosted
+    needs: build-fn4-docker
+    strategy:
+      matrix:
+        singularity_version:
+          - '3.5.3'
+    container:
+      image: quay.io/singularity/singularity:v${{ matrix.singularity_version }}
+      options: --privileged
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set release version
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+      - 
+        name: build singularity
+        run: singularity build fn4_upload_${{env.RELEASE_VERSION}}.sif docker://oxfordmmm/fn4_upload:${{env.RELEASE_VERSION}}
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: fn4_upload_*.sif
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload image for OCI push
+        uses: actions/upload-artifact@v2
+        with:
+          name: fn4_upload
+          path: fn4_upload_*.sif
+
   push_images_to_oci:
     runs-on: ubuntu-latest
-    needs: [build-aln2type-sing, build-nextclade-sing, build-oci-sing, build-pango-sing]
+    needs: [build-aln2type-sing, build-nextclade-sing, build-oci-sing, build-pango-sing, build-fn4-sing]
     steps:
       - uses: actions/checkout@v2
       - name: Set release version
@@ -236,5 +291,11 @@ jobs:
         with:
           path: sing_images
       
+      - name: 'Get latest viridian image'
+        run: |
+          VIRIDIAN_VERSION=$(curl -s -L -I -o /dev/null -w '%{url_effective}' https://github.com/iqbal-lab-org/viridian_workflow/releases/latest | xargs basename)
+          wget https://github.com/iqbal-lab-org/viridian_workflow/releases/latest/download/viridian_workflow_${VIRIDIAN_VERSION}.img
+          mv viridian_workflow_v*.img sing_images/
+
       - name: 'Upload to OCI'
         run: oci os object bulk-upload -bn artic_images --src-dir sing_images --object-prefix "${{env.RELEASE_VERSION}}/"
