@@ -200,7 +200,7 @@ jobs:
           path: pango_*.sif
   
   push_images_to_oci:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     needs: [build-aln2type-sing, build-nextclade-sing, build-oci-sing, build-pango-sing]
     steps:
       - uses: actions/checkout@v2
