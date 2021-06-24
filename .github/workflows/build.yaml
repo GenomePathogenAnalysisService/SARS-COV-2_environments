@@ -299,3 +299,13 @@ jobs:
 
       - name: 'Upload to OCI'
         run: oci os object bulk-upload -bn artic_images --src-dir sing_images --object-prefix "${{env.RELEASE_VERSION}}/"
+      
+      - uses: geekyeggo/delete-artifact@v1
+        with:
+          name: |
+            aln2type
+            nextclade
+            oci_pipeline
+            pango
+            fn4_upload
+          failOnError: false
