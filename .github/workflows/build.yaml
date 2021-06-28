@@ -285,12 +285,37 @@ jobs:
         run: |
           oci setup repair-file-permissions --file ~/.oci/config
           oci setup repair-file-permissions --file ~/.oci/key.pem
-      
-      - name: Gather all singularity images
+
+      - name: Gather aln2type singularity image
         uses: actions/download-artifact@v2
         with:
           path: sing_images
-      
+          name: aln2type
+
+      - name: Gather nextclade singularity image
+        uses: actions/download-artifact@v2
+        with:
+          path: sing_images
+          name: nextclade
+
+      - name: Gather oci_pipeline singularity image
+        uses: actions/download-artifact@v2
+        with:
+          path: sing_images
+          name: oci_pipeline
+
+      - name: Gather pango singularity image
+        uses: actions/download-artifact@v2
+        with:
+          path: sing_images
+          name: pango
+
+      - name: Gather fn4_upload singularity image
+        uses: actions/download-artifact@v2
+        with:
+          path: sing_images
+          name: fn4_upload
+
       - name: 'Get latest viridian image'
         run: |
           VIRIDIAN_VERSION=$(curl -s -L -I -o /dev/null -w '%{url_effective}' https://github.com/iqbal-lab-org/viridian_workflow/releases/latest | xargs basename)
