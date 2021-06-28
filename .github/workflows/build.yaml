@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-aln2type-docker:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v2
@@ -33,7 +33,7 @@ jobs:
         run: echo ${{ steps.docker_build.outputs.digest }}
 
   build-aln2type-sing:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     needs: build-aln2type-docker
     strategy:
       matrix:
@@ -62,7 +62,7 @@ jobs:
           path: aln2type_*.sif
 
   build-nextclade-sing:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         singularity_version:
@@ -90,7 +90,7 @@ jobs:
           path: nextclade_*.sif
 
   build-oci-docker:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v2
@@ -116,7 +116,7 @@ jobs:
         run: echo ${{ steps.docker_build.outputs.digest }}
 
   build-oci-sing:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     needs: build-oci-docker
     strategy:
       matrix:
@@ -145,7 +145,7 @@ jobs:
           path: oci_pipeline_*.sif
   
   build-pango-docker:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v2
@@ -171,7 +171,7 @@ jobs:
         run: echo ${{ steps.docker_build.outputs.digest }}
 
   build-pango-sing:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     needs: build-pango-docker
     strategy:
       matrix:
@@ -200,7 +200,7 @@ jobs:
           path: pango_*.sif
   
   build-fn4-docker:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v2
@@ -226,7 +226,7 @@ jobs:
         run: echo ${{ steps.docker_build.outputs.digest }}
 
   build-fn4-sing:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     needs: build-fn4-docker
     strategy:
       matrix:
