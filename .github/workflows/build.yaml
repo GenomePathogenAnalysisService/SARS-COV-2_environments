@@ -327,7 +327,7 @@ jobs:
           ARTIC_VERSION=$(curl -s -L -I -o /dev/null -w '%{url_effective}' https://github.com/oxfordmmm/ncov2019-artic-nf/releases/latest | xargs basename)
           wget https://github.com/oxfordmmm/ncov2019-artic-nf/releases/latest/download/artic-ncov2019-illumina_${ARTIC_VERSION}.sif
           wget https://github.com/oxfordmmm/ncov2019-artic-nf/releases/latest/download/artic-ncov2019-nanopore_${ARTIC_VERSION}.sif
-          mv artic-ncov2019-*.img sing_images/
+          mv artic-ncov2019-*.sif sing_images/
 
       - name: 'Upload to OCI'
         run: oci os object bulk-upload -bn artic_images --src-dir sing_images --object-prefix "${{env.RELEASE_VERSION}}/"
