@@ -315,12 +315,13 @@ jobs:
         with:
           path: sing_images
           name: fn4_upload
-
+      
       - name: 'Get latest viridian image'
         run: |
           VIRIDIAN_VERSION=$(curl -s -L -I -o /dev/null -w '%{url_effective}' https://github.com/iqbal-lab-org/viridian_workflow/releases/latest | xargs basename)
           wget https://github.com/iqbal-lab-org/viridian_workflow/releases/latest/download/viridian_workflow_${VIRIDIAN_VERSION}.img
           mv viridian_workflow_v*.img sing_images/
+          echo "VIRIDIAN_VERSION=$(curl -s -L -I -o /dev/null -w '%{url_effective}' https://github.com/iqbal-lab-org/viridian_workflow/releases/latest | xargs basename)" >> $GITHUB_ENV
 
       - name: 'Get latest ncov2019-artic-nf images'
         run: |
@@ -328,10 +329,40 @@ jobs:
           wget https://github.com/oxfordmmm/ncov2019-artic-nf/releases/latest/download/artic-ncov2019-illumina_${ARTIC_VERSION}.sif
           wget https://github.com/oxfordmmm/ncov2019-artic-nf/releases/latest/download/artic-ncov2019-nanopore_${ARTIC_VERSION}.sif
           mv artic-ncov2019-*.sif sing_images/
+          echo "ARTIC_VERSION=$(curl -s -L -I -o /dev/null -w '%{url_effective}' https://github.com/oxfordmmm/ncov2019-artic-nf/releases/latest | xargs basename)" >> $GITHUB_ENV
 
       - name: 'Upload to OCI'
         run: oci os object bulk-upload -bn artic_images --src-dir sing_images --object-prefix "${{env.RELEASE_VERSION}}/"
       
+      - uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.SP3_GITHUB_TOKEN }}
+          repository: oxfordmmm/ncov2019-artic-nf
+          path: ncov2019-artic-nf
+          ref: ${{ env.ARTIC_VERSION }}
+          fetch-depth: 0
+      
+      - name: 'Update ncov2019 nextflow config'
+        working-directory: ncov2019-artic-nf
+        run: |
+          git switch -c temp-sp3env
+          sed -i "s/artic-ncov2019-illumina_v*.*.*.sif/artic-ncov2019-illumina_${ARTIC_VERSION}.sif/g" nextflow.config
+          sed -i "s/artic-ncov2019-nanopore_v*.*.*.sif/artic-ncov2019-nanopore_${ARTIC_VERSION}.sif/g" nextflow.config
+          sed -i "s/viridian_workflow_v*.*.*.img/viridian_workflow_${VIRIDIAN_VERSION}.img/g" nextflow.config
+          sed -i "s/oci_pipeline_v*.*.*.sif/oci_pipeline_${RELEASE_VERSION}.sif/g" nextflow.config
+          sed -i "s/pango_v*.*.*.sif/pango_${RELEASE_VERSION}.sif/g" nextflow.config
+          sed -i "s/nextclade_v*.*.*.sif/nextclade_${RELEASE_VERSION}.sif/g" nextflow.config
+          sed -i "s/aln2type_v*.*.*.sif/aln2type_${RELEASE_VERSION}.sif/g" nextflow.config
+          sed -i "s/fn4_upload_v*.*.*.sif/fn4_upload_${RELEASE_VERSION}.sif/g" nextflow.config
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add nextflow.config
+          git commit -m "config file for sp3 environment ${RELEASE_VERSION}"
+          git tag sp3env-${RELEASE_VERSION}
+          git push --set-upstream origin temp-sp3env 
+          git push --tags
+          git checkout master
+          git push origin --delete temp-sp3env
       - uses: geekyeggo/delete-artifact@v1
         with:
           name: |
