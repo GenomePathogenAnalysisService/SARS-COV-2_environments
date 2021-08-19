@@ -1,0 +1,23 @@
+name: Automatically build every Sunday
+
+on:
+  schedule:
+    - cron: '33 23 * * 0'
+
+jobs:
+  create_new_tag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: 'Create tag'
+        run: |
+          CURRENT_VERSION=$(git describe --tags `git rev-list --tags --max-count=1`)
+          readarray -d . -t strarr <<< "$CURRENT_VERSION"
+          ((strarr[-1]-=1))
+          NEW_VERSION="${strarr[0]}"
+          for elem in "${strarr[@]:1}";do NEW_VERSION="$NEW_VERSION.$elem"; done
+
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git tag v${NEW_VERSION}
+          git push --tags
