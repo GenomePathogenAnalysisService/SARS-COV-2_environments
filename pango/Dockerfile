@@ -12,6 +12,6 @@ RUN conda env create -f environment.yml -n pangolin && \
 ENV PATH /opt/conda/envs/pangolin/bin:$PATH
 RUN python setup.py install
 
-RUN apt-get update && apt-get install -y procps
+RUN apt-get --allow-releaseinfo-change update && apt-get install -y procps
 
 
