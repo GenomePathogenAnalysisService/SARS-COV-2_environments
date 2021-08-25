@@ -76,7 +76,7 @@ jobs:
         run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
       - 
         name: build singularity
-        run: singularity build nextclade_${{env.RELEASE_VERSION}}.sif docker://neherlab/nextclade:latest
+        run: singularity build nextclade_${{env.RELEASE_VERSION}}.sif docker://nextstrain/nextclade:latest
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
