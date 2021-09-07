@@ -2,7 +2,7 @@ name: Automatically build every Sunday
 
 on:
   schedule:
-    - cron: '33 23 * * 0'
+    - cron: '50 13 * * 0'
 
 jobs:
   create_new_tag:
@@ -11,7 +11,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - name: 'Create tag'
+      - name: 'Define new version'
         run: |
           CURRENT_VERSION=$(git tag -l --sort=-version:refname | head -n 1)
           echo "Current Version = $CURRENT_VERSION"
@@ -20,8 +20,8 @@ jobs:
           NEW_VERSION="${strarr[0]}"
           for elem in "${strarr[@]:1}";do NEW_VERSION="$NEW_VERSION.$elem"; done
           echo "New Version = $NEW_VERSION"
-
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          git tag ${NEW_VERSION}
-          git push --tags
+          echo "NEW_VERSION=${NEW_VERSION}" >> $GITHUB_ENV
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ env.NEW_VERSION }}
