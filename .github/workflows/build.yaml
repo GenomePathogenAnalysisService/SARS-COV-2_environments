@@ -279,6 +279,7 @@ jobs:
           name: nextclade
 
       - name: Gather pango singularity image
+        id: download
         uses: actions/download-artifact@v2
         with:
           path: sing_images
@@ -288,15 +289,12 @@ jobs:
         run: |
           VIRIDIAN_VERSION=$(curl -s -L -I -o /dev/null -w '%{url_effective}' https://github.com/iqbal-lab-org/viridian_workflow/releases/latest | xargs basename)
           wget https://github.com/iqbal-lab-org/viridian_workflow/releases/latest/download/viridian_workflow_${VIRIDIAN_VERSION}.img
-          mv viridian_workflow_v*.img sing_images/
+          mv viridian_workflow_v*.img ${{steps.download.outputs.download-path}}/
           echo "VIRIDIAN_VERSION=$(curl -s -L -I -o /dev/null -w '%{url_effective}' https://github.com/iqbal-lab-org/viridian_workflow/releases/latest | xargs basename)" >> $GITHUB_ENV
 
       - name: 'Get latest ncov2019-artic-nf images'
         run: |
           ARTIC_VERSION=$(curl -s -L -I -o /dev/null -w '%{url_effective}' https://github.com/oxfordmmm/ncov2019-artic-nf/releases/latest | xargs basename)
-          wget https://github.com/oxfordmmm/ncov2019-artic-nf/releases/latest/download/artic-ncov2019-illumina_${ARTIC_VERSION}.sif
-          wget https://github.com/oxfordmmm/ncov2019-artic-nf/releases/latest/download/artic-ncov2019-nanopore_${ARTIC_VERSION}.sif
-          mv artic-ncov2019-*.sif sing_images/
           echo "ARTIC_VERSION=$(curl -s -L -I -o /dev/null -w '%{url_effective}' https://github.com/oxfordmmm/ncov2019-artic-nf/releases/latest | xargs basename)" >> $GITHUB_ENV
       
       - uses: actions/checkout@v2
