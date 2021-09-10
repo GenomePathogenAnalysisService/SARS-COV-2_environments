@@ -327,7 +327,7 @@ jobs:
           sed -i "s/version = '*.*.*'/version = 'sp3env-${RELEASE_VERSION}'/g" nextflow.config
           git config user.name github-actions
           git config user.email github-actions@github.com
-          git add nextflow.config version.txt
+          git add nextflow.config versions.txt
           git commit -m "config and version file for sp3 environment ${RELEASE_VERSION}"
           git tag sp3env-${RELEASE_VERSION}
           git push --set-upstream origin temp-sp3env 
