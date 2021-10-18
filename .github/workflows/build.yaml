@@ -49,12 +49,6 @@ jobs:
       - 
         name: build singularity
         run: singularity build aln2type_${{env.RELEASE_VERSION}}.sif docker://oxfordmmm/aln2type:${{env.RELEASE_VERSION}}
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        with:
-          files: aln2type_*.sif
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload image for OCI push
         uses: actions/upload-artifact@v2
         with:
@@ -77,12 +71,6 @@ jobs:
       - 
         name: build singularity
         run: singularity build nextclade_${{env.RELEASE_VERSION}}.sif docker://nextstrain/nextclade:latest
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        with:
-          files: nextclade_*.sif
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload image for OCI push
         uses: actions/upload-artifact@v2
         with:
@@ -132,12 +120,6 @@ jobs:
       - 
         name: build singularity
         run: singularity build oci_pipeline_${{env.RELEASE_VERSION}}.sif docker://oxfordmmm/oci_pipeline:${{env.RELEASE_VERSION}}
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        with:
-          files: oci_pipeline_*.sif
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload image for OCI push
         uses: actions/upload-artifact@v2
         with:
@@ -187,12 +169,6 @@ jobs:
       - 
         name: build singularity
         run: singularity build pango_${{env.RELEASE_VERSION}}.sif docker://oxfordmmm/pango:${{env.RELEASE_VERSION}}
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        with:
-          files: pango_*.sif
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload image for OCI push
         uses: actions/upload-artifact@v2
         with:
@@ -242,12 +218,6 @@ jobs:
       - 
         name: build singularity
         run: singularity build fn4_upload_${{env.RELEASE_VERSION}}.sif docker://oxfordmmm/fn4_upload:${{env.RELEASE_VERSION}}
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        with:
-          files: fn4_upload_*.sif
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload image for OCI push
         uses: actions/upload-artifact@v2
         with:
@@ -414,6 +384,18 @@ jobs:
 
       - name: 'Upload to OCI'
         run: oci os object bulk-upload -bn artic_images --src-dir sing_images --object-prefix "${{env.RELEASE_VERSION}}/"
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: | 
+            sing_images/aln2type_*.sif
+            sing_images/nextclade_*.sif
+            sing_images/oci_pipeline_*.sif
+            sing_images/pango_*.sif
+            sing_images/fn4_upload_*.sif
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: geekyeggo/delete-artifact@v1
         with:
