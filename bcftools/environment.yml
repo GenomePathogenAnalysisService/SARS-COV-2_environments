@@ -1,0 +1,14 @@
+name: bcftools
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - bcbio-gff         
+  - bcftools          
+  - biopython         
+  - bx-python         
+  - entrez-direct     
+  - gffutils          
+  - gsl               
+  - htslib            
