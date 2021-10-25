@@ -343,6 +343,7 @@ jobs:
           sed -i "s/nextclade_v*.*.*.sif/nextclade_${RELEASE_VERSION}.sif/g" nextflow.config
           sed -i "s/aln2type_v*.*.*.sif/aln2type_${RELEASE_VERSION}.sif/g" nextflow.config
           sed -i "s/fn4_upload_v*.*.*.sif/fn4_upload_${RELEASE_VERSION}.sif/g" nextflow.config
+          sed -i "s/bcftools_v*.*.*.sif/bcftools_${RELEASE_VERSION}.sif/g" nextflow.config
           sed -i "s/version = '*.*.*'/version = 'sp3env-${RELEASE_VERSION}'/g" nextflow.config
           git config user.name github-actions
           git config user.email github-actions@github.com
