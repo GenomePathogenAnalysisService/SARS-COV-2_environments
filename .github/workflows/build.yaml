@@ -224,9 +224,58 @@ jobs:
           name: fn4_upload
           path: fn4_upload_*.sif
 
+  build-bcftools-docker:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set release version
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+      -
+        name: Login to DockerHub
+        uses: docker/login-action@v1 
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      -
+        name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          context: bcftools
+          tags: oxfordmmm/bcftools:latest, oxfordmmm/bcftools:${{env.RELEASE_VERSION}}
+          push: true
+          no-cache: true
+      -
+        name: Docker digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
+
+  build-bcftools-sing:
+    runs-on: ubuntu-latest
+    needs: build-bcftools-docker
+    strategy:
+      matrix:
+        singularity_version:
+          - '3.7.0'
+    container:
+      image: quay.io/singularity/singularity:v${{ matrix.singularity_version }}
+      options: --privileged
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set release version
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+      - 
+        name: build singularity
+        run: singularity build bcftools_${{env.RELEASE_VERSION}}.sif docker://oxfordmmm/bcftools:${{env.RELEASE_VERSION}}
+      - name: Upload image for OCI push
+        uses: actions/upload-artifact@v2
+        with:
+          name: bcftools
+          path: bcftools_*.sif
+
   get_versions:
     runs-on: ubuntu-latest
-    needs: [build-aln2type-sing, build-nextclade-sing, build-oci-sing, build-pango-sing, build-fn4-sing]
+    needs: [build-aln2type-sing, build-nextclade-sing, build-oci-sing, build-pango-sing, build-fn4-sing, build-bcftools-sing]
     strategy:
       matrix:
         singularity_version:
@@ -367,6 +416,12 @@ jobs:
           path: sing_images
           name: fn4_upload
       
+      - name: Gather bcftools singularity image
+        uses: actions/download-artifact@v2
+        with:
+          path: sing_images
+          name: bcftools
+
       - name: 'Get latest viridian image'
         run: |
           VIRIDIAN_VERSION=$(curl -s -L -I -o /dev/null -w '%{url_effective}' https://github.com/iqbal-lab-org/viridian_workflow/releases/latest | xargs basename)
@@ -394,6 +449,7 @@ jobs:
             sing_images/oci_pipeline_*.sif
             sing_images/pango_*.sif
             sing_images/fn4_upload_*.sif
+            sing_images/bcftools_*.sif
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -405,4 +461,5 @@ jobs:
             oci_pipeline
             pango
             fn4_upload
+            bcftools
           failOnError: false
