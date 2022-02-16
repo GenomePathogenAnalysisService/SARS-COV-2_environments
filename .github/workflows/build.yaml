@@ -316,6 +316,11 @@ jobs:
           ARTIC_VERSION=$(curl -s -L -I -o /dev/null -w '%{url_effective}' https://github.com/oxfordmmm/ncov2019-artic-nf/releases/latest | xargs basename)
           echo "ARTIC_VERSION=$(curl -s -L -I -o /dev/null -w '%{url_effective}' https://github.com/oxfordmmm/ncov2019-artic-nf/releases/latest | xargs basename)" >> $GITHUB_ENV
       
+      - name: 'Get latest SARS-CoV2_workflows images'
+        run: |
+          GPAS_COV2_VERSION=$(curl -s -L -I -o /dev/null -w '%{url_effective}' https://github.com/oxfordmmm/SARS-CoV2_workflows/releases/latest | xargs basename)
+          echo "GPAS_COV2_VERSION=$(curl -s -L -I -o /dev/null -w '%{url_effective}' https://github.com/oxfordmmm/SARS-CoV2_workflows/releases/latest | xargs basename)" >> $GITHUB_ENV
+      
       - uses: actions/checkout@v2
         with:
           token: ${{ secrets.SP3_GITHUB_TOKEN }}
@@ -324,19 +329,57 @@ jobs:
           ref: ${{ env.ARTIC_VERSION }}
           fetch-depth: 0
       
-      - name: "Get versions"
+      - name: "Get versions - artic wf"
         working-directory: ncov2019-artic-nf
         run: |
           echo "viridian $(singularity exec ${{steps.download.outputs.download-path}}/viridian_workflow_${VIRIDIAN_VERSION}.img viridian_workflow --version)" >> versions.txt
           echo "nextclade $(singularity exec ${{steps.download.outputs.download-path}}/nextclade_${RELEASE_VERSION}.sif nextclade -v)" >> versions.txt
           echo "$(singularity exec ${{steps.download.outputs.download-path}}/pango_${RELEASE_VERSION}.sif pangolin -v)" >> versions.txt
 
-      - name: 'Update ncov2019 nextflow config and versions'
+      - name: 'Update nextflow config and versions - artic wf'
         working-directory: ncov2019-artic-nf
         run: |
           git checkout -b temp-sp3env
           sed -i "s/artic-ncov2019-illumina_v*.*.*.sif/artic-ncov2019-illumina_${ARTIC_VERSION}.sif/g" nextflow.config
           sed -i "s/artic-ncov2019-nanopore_v*.*.*.sif/artic-ncov2019-nanopore_${ARTIC_VERSION}.sif/g" nextflow.config
+          sed -i "s/viridian_workflow_v*.*.*.img/viridian_workflow_${VIRIDIAN_VERSION}.img/g" nextflow.config
+          sed -i "s/oci_pipeline_v*.*.*.sif/oci_pipeline_${RELEASE_VERSION}.sif/g" nextflow.config
+          sed -i "s/pango_v*.*.*.sif/pango_${RELEASE_VERSION}.sif/g" nextflow.config
+          sed -i "s/nextclade_v*.*.*.sif/nextclade_${RELEASE_VERSION}.sif/g" nextflow.config
+          sed -i "s/aln2type_v*.*.*.sif/aln2type_${RELEASE_VERSION}.sif/g" nextflow.config
+          sed -i "s/fn4_upload_v*.*.*.sif/fn4_upload_${RELEASE_VERSION}.sif/g" nextflow.config
+          sed -i "s/bcftools_v*.*.*.sif/bcftools_${RELEASE_VERSION}.sif/g" nextflow.config
+          sed -i "s/version = '*.*.*'/version = 'sp3env-${RELEASE_VERSION}'/g" nextflow.config
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add nextflow.config versions.txt
+          git commit -m "config and version file for sp3 environment ${RELEASE_VERSION}"
+          git tag sp3env-${RELEASE_VERSION}
+          git push --set-upstream origin temp-sp3env 
+          git push --tags
+          git checkout master
+          git push origin --delete temp-sp3env
+
+      - uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.SP3_GITHUB_TOKEN }}
+          repository: oxfordmmm/SARS-CoV2_workflows
+          path: SARS-CoV2_workflows
+          ref: ${{ env.GPAS_COV2_VERSION }}
+          fetch-depth: 0
+
+      - name: "Get versions - GPAS wf"
+        working-directory: ncov2019-artic-nf
+        run: |
+          echo "viridian $(singularity exec ${{steps.download.outputs.download-path}}/viridian_workflow_${VIRIDIAN_VERSION}.img viridian_workflow --version)" >> versions.txt
+          echo "nextclade $(singularity exec ${{steps.download.outputs.download-path}}/nextclade_${RELEASE_VERSION}.sif nextclade -v)" >> versions.txt
+          echo "$(singularity exec ${{steps.download.outputs.download-path}}/pango_${RELEASE_VERSION}.sif pangolin -v)" >> versions.txt
+
+      - name: 'Update nextflow config and versions - GPAS wf'
+        working-directory: ncov2019-artic-nf
+        run: |
+          git checkout -b temp-sp3env
+          sed -i "s/sars-cov2_workflows_v*.*.*.sif/sars-cov2_workflows_${GPAS_COV2_VERSION}.sif/g" nextflow.config
           sed -i "s/viridian_workflow_v*.*.*.img/viridian_workflow_${VIRIDIAN_VERSION}.img/g" nextflow.config
           sed -i "s/oci_pipeline_v*.*.*.sif/oci_pipeline_${RELEASE_VERSION}.sif/g" nextflow.config
           sed -i "s/pango_v*.*.*.sif/pango_${RELEASE_VERSION}.sif/g" nextflow.config
@@ -437,6 +480,13 @@ jobs:
           wget https://github.com/oxfordmmm/ncov2019-artic-nf/releases/latest/download/artic-ncov2019-nanopore_${ARTIC_VERSION}.sif
           mv artic-ncov2019-*.sif sing_images/
           echo "ARTIC_VERSION=$(curl -s -L -I -o /dev/null -w '%{url_effective}' https://github.com/oxfordmmm/ncov2019-artic-nf/releases/latest | xargs basename)" >> $GITHUB_ENV
+
+      - name: 'Get latest SARS-CoV2_workflows images'
+        run: |
+          GPAS_COV2_VERSION=$(curl -s -L -I -o /dev/null -w '%{url_effective}' https://github.com/oxfordmmm/SARS-CoV2_workflows /releases/latest | xargs basename)
+          wget https://github.com/oxfordmmm/SARS-CoV2_workflows/releases/latest/download/SARS-CoV2_workflows _${GPAS_COV2_VERSION}.sif
+          mv sars-cov2_workflows-*.sif sing_images/
+          echo "GPAS_COV2_VERSION=$(curl -s -L -I -o /dev/null -w '%{url_effective}' https://github.com/oxfordmmm/SARS-CoV2_workflows/releases/latest | xargs basename)" >> $GITHUB_ENV
 
       - name: 'Upload to OCI'
         run: oci os object bulk-upload -bn artic_images --src-dir sing_images --object-prefix "${{env.RELEASE_VERSION}}/"
