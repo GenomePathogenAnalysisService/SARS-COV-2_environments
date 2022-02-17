@@ -395,7 +395,7 @@ jobs:
           git tag sp3env-${RELEASE_VERSION}
           git push --set-upstream origin temp-sp3env 
           git push --tags
-          git checkout master
+          git checkout main
           git push origin --delete temp-sp3env
 
   push_images_to_oci:
