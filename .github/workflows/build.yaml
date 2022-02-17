@@ -369,14 +369,14 @@ jobs:
           fetch-depth: 0
 
       - name: "Get versions - GPAS wf"
-        working-directory: ncov2019-artic-nf
+        working-directory: SARS-CoV2_workflows
         run: |
           echo "viridian $(singularity exec ${{steps.download.outputs.download-path}}/viridian_workflow_${VIRIDIAN_VERSION}.img viridian_workflow --version)" >> versions.txt
           echo "nextclade $(singularity exec ${{steps.download.outputs.download-path}}/nextclade_${RELEASE_VERSION}.sif nextclade -v)" >> versions.txt
           echo "$(singularity exec ${{steps.download.outputs.download-path}}/pango_${RELEASE_VERSION}.sif pangolin -v)" >> versions.txt
 
       - name: 'Update nextflow config and versions - GPAS wf'
-        working-directory: ncov2019-artic-nf
+        working-directory: SARS-CoV2_workflows
         run: |
           git checkout -b temp-sp3env
           sed -i "s/sars-cov2_workflows_v*.*.*.sif/sars-cov2_workflows_${GPAS_COV2_VERSION}.sif/g" nextflow.config
