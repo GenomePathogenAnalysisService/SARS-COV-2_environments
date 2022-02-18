@@ -485,7 +485,7 @@ jobs:
         run: |
           GPAS_COV2_VERSION=$(curl -s -L -I -o /dev/null -w '%{url_effective}' https://github.com/oxfordmmm/SARS-CoV2_workflows/releases/latest | xargs basename)
           wget https://github.com/oxfordmmm/SARS-CoV2_workflows/releases/latest/download/sars-cov2_workflows_${GPAS_COV2_VERSION}.sif
-          mv sars-cov2_workflows-*.sif sing_images/
+          mv sars-cov2_workflows_*.sif sing_images/
           echo "GPAS_COV2_VERSION=$(curl -s -L -I -o /dev/null -w '%{url_effective}' https://github.com/oxfordmmm/SARS-CoV2_workflows/releases/latest | xargs basename)" >> $GITHUB_ENV
 
       - name: 'Upload to OCI'
