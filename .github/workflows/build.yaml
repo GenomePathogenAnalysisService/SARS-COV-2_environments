@@ -19,13 +19,26 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      -
+        name: Login to OCR
+        uses: docker/login-action@v1 
+        with:
+          registry: lhr.ocir.io
+          username: ${{ secrets.OCR_USERNAME }}
+          password: ${{ secrets.OCR_TOKEN }}
+
       -
         name: Build and push
         id: docker_build
         uses: docker/build-push-action@v2
         with:
           context: aln2type
-          tags: oxfordmmm/aln2type:latest, oxfordmmm/aln2type:${{env.RELEASE_VERSION}}
+          tags: |
+            oxfordmmm/aln2type:latest
+            oxfordmmm/aln2type:${{env.RELEASE_VERSION}}
+            lhr.ocir.io/${{secrets.OCR_NAMESPACE}}/oxfordmmm/aln2type:latest
+            lhr.ocir.io/${{secrets.OCR_NAMESPACE}}/oxfordmmm/aln2type:${{env.RELEASE_VERSION}}
           push: true
           no-cache: true
       -
@@ -91,12 +104,23 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       -
+        name: Login to OCR
+        uses: docker/login-action@v1 
+        with:
+          registry: lhr.ocir.io
+          username: ${{ secrets.OCR_USERNAME }}
+          password: ${{ secrets.OCR_TOKEN }}
+      -
         name: Build and push
         id: docker_build
         uses: docker/build-push-action@v2
         with:
           context: OCI_object_HRR
-          tags: oxfordmmm/oci_pipeline:latest, oxfordmmm/oci_pipeline:${{env.RELEASE_VERSION}}
+          tags: |
+            oxfordmmm/oci_pipeline:latest
+            oxfordmmm/oci_pipeline:${{env.RELEASE_VERSION}}
+            lhr.ocir.io/${{secrets.OCR_NAMESPACE}}/oxfordmmm/oci_pipeline:latest
+            lhr.ocir.io/${{secrets.OCR_NAMESPACE}}/oxfordmmm/oci_pipeline:${{env.RELEASE_VERSION}}
           push: true
           no-cache: true
       -
@@ -140,12 +164,23 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       -
+        name: Login to OCR
+        uses: docker/login-action@v1 
+        with:
+          registry: lhr.ocir.io
+          username: ${{ secrets.OCR_USERNAME }}
+          password: ${{ secrets.OCR_TOKEN }}
+      -
         name: Build and push
         id: docker_build
         uses: docker/build-push-action@v2
         with:
           context: pango
-          tags: oxfordmmm/pango:latest, oxfordmmm/pango:${{env.RELEASE_VERSION}}
+          tags: |
+            oxfordmmm/pango:latest
+            oxfordmmm/pango:${{env.RELEASE_VERSION}}
+            lhr.ocir.io/${{secrets.OCR_NAMESPACE}}/oxfordmmm/pango:latest
+            lhr.ocir.io/${{secrets.OCR_NAMESPACE}}/oxfordmmm/pango:${{env.RELEASE_VERSION}}
           push: true
           no-cache: true
       -
@@ -189,12 +224,23 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       -
+        name: Login to OCR
+        uses: docker/login-action@v1 
+        with:
+          registry: lhr.ocir.io
+          username: ${{ secrets.OCR_USERNAME }}
+          password: ${{ secrets.OCR_TOKEN }}
+      -
         name: Build and push
         id: docker_build
         uses: docker/build-push-action@v2
         with:
           context: FN4upload
-          tags: oxfordmmm/fn4_upload:latest, oxfordmmm/fn4_upload:${{env.RELEASE_VERSION}}
+          tags: |
+            oxfordmmm/fn4_upload:latest
+            oxfordmmm/fn4_upload:${{env.RELEASE_VERSION}}
+            lhr.ocir.io/${{secrets.OCR_NAMESPACE}}/oxfordmmm/fn4_upload:latest
+            lhr.ocir.io/${{secrets.OCR_NAMESPACE}}/oxfordmmm/fn4_upload:${{env.RELEASE_VERSION}}
           push: true
           no-cache: true
       -
@@ -238,12 +284,23 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       -
+        name: Login to OCR
+        uses: docker/login-action@v1 
+        with:
+          registry: lhr.ocir.io
+          username: ${{ secrets.OCR_USERNAME }}
+          password: ${{ secrets.OCR_TOKEN }}
+      -
         name: Build and push
         id: docker_build
         uses: docker/build-push-action@v2
         with:
           context: bcftools
-          tags: oxfordmmm/bcftools:latest, oxfordmmm/bcftools:${{env.RELEASE_VERSION}}
+          tags: |
+            oxfordmmm/bcftools:latest
+            oxfordmmm/bcftools:${{env.RELEASE_VERSION}}
+            lhr.ocir.io/${{secrets.OCR_NAMESPACE}}/oxfordmmm/bcftools:latest
+            lhr.ocir.io/${{secrets.OCR_NAMESPACE}}/oxfordmmm/bcftools:${{env.RELEASE_VERSION}}
           push: true
           no-cache: true
       -
