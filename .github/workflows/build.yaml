@@ -410,7 +410,6 @@ jobs:
 
           sed -i "s/artic-ncov2019-illumina:v*.*.*'/artic-ncov2019-illumina:${ARTIC_VERSION}'/g" nextflow.config
           sed -i "s/artic-ncov2019-nanopore:v*.*.*'/artic-ncov2019-nanopore:${ARTIC_VERSION}'/g" nextflow.config
-          sed -i "s/viridian_workflow:v*.*.*'/viridian_workflow:${VIRIDIAN_VERSION}'/g" nextflow.config
           sed -i "s/oci_pipeline:v*.*.*'/oci_pipeline:${RELEASE_VERSION}'/g" nextflow.config
           sed -i "s/pango:v*.*.*'/pango:${RELEASE_VERSION}'/g" nextflow.config
           sed -i "s/aln2type:v*.*.*'/aln2type:${RELEASE_VERSION}'/g" nextflow.config
