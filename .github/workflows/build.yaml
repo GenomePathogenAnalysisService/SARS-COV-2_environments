@@ -454,6 +454,14 @@ jobs:
           sed -i "s/fn4_upload_v*.*.*.sif/fn4_upload_${RELEASE_VERSION}.sif/g" nextflow.config
           sed -i "s/bcftools_v*.*.*.sif/bcftools_${RELEASE_VERSION}.sif/g" nextflow.config
           sed -i "s/version = '*.*.*'/version = 'sp3env-${RELEASE_VERSION}'/g" nextflow.config
+
+          sed -i "s/sars-cov2_workflows:v*.*.*'/sars-cov2_workflows:${GPAS_COV2_VERSION}'/g" nextflow.config
+          sed -i "s/oci_pipeline:v*.*.*'/oci_pipeline:${RELEASE_VERSION}'/g" nextflow.config
+          sed -i "s/pango:v*.*.*'/pango:${RELEASE_VERSION}'/g" nextflow.config
+          sed -i "s/aln2type:v*.*.*'/aln2type:${RELEASE_VERSION}'/g" nextflow.config
+          sed -i "s/fn4_upload:v*.*.*'/fn4_upload:${RELEASE_VERSION}'/g" nextflow.config
+          sed -i "s/bcftools:v*.*.*'/bcftools:${RELEASE_VERSION}'/g" nextflow.config
+
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add nextflow.config versions.txt
