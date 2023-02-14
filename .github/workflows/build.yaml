@@ -390,8 +390,16 @@ jobs:
         working-directory: ncov2019-artic-nf
         run: |
           echo "viridian $(singularity exec ${{steps.download.outputs.download-path}}/viridian_workflow_${VIRIDIAN_VERSION}.img viridian_workflow --version)" >> versions.txt
-          echo "nextclade $(singularity exec ${{steps.download.outputs.download-path}}/nextclade_${RELEASE_VERSION}.sif nextclade -v)" >> versions.txt
+          echo "nextclade $(singularity exec ${{steps.download.outputs.download-path}}/nextclade_${RELEASE_VERSION}.sif nextclade -V)" >> versions.txt
           echo "$(singularity exec ${{steps.download.outputs.download-path}}/pango_${RELEASE_VERSION}.sif pangolin -v)" >> versions.txt
+          echo "aln2type $(docker run ${{steps.download.outputs.download-path}}/aln2type:${RELEASE_VERSION} /bin/sh -c 'cd aln2type/ && git describe --tags')" >> versions.txt
+          echo "bcftools $(singularity exec ${{steps.download.outputs.download-path}}/bcftools_${RELEASE_VERSION}.sif bcftools --version-only)" >> versions.txt
+          echo "fn4-upload $(singularity exec ${{steps.download.outputs.download-path}}/fn4_upload_${RELEASE_VERSION}.sif samtools version | head -1" >> versions.txt
+          echo "fn4-upload $(singularity exec ${{steps.download.outputs.download-path}}/fn4_upload_${RELEASE_VERSION}.sif pip freeze | grep biopython" >> versions.txt
+          echo "fn4-upload mafft $(singularity exec ${{steps.download.outputs.download-path}}/fn4_upload_${RELEASE_VERSION}.sif  dpkg -s mafft | grep Version" >> versions.txt
+          echo "OCI HRR $(singularity exec ${{steps.download.outputs.download-path}}/oci_pipeline_${RELEASE_VERSION}.sif samtools version | head -1" >> versions.txt
+          echo "OCI HRR $(singularity exec ${{steps.download.outputs.download-path}}/oci_pipeline_${RELEASE_VERSION}.sif kraken2 --version | head -1" >> versions.txt
+   
 
       - name: 'Update nextflow config and versions - artic wf'
         working-directory: ncov2019-artic-nf
@@ -438,7 +446,7 @@ jobs:
         working-directory: SARS-CoV2_workflows
         run: |
           echo "viridian $(singularity exec ${{steps.download.outputs.download-path}}/viridian_workflow_${VIRIDIAN_VERSION}.img viridian_workflow --version)" >> versions.txt
-          echo "nextclade $(singularity exec ${{steps.download.outputs.download-path}}/nextclade_${RELEASE_VERSION}.sif nextclade -v)" >> versions.txt
+          echo "nextclade $(singularity exec ${{steps.download.outputs.download-path}}/nextclade_${RELEASE_VERSION}.sif nextclade -V)" >> versions.txt
           echo "$(singularity exec ${{steps.download.outputs.download-path}}/pango_${RELEASE_VERSION}.sif pangolin -v)" >> versions.txt
 
       - name: 'Update nextflow config and versions - GPAS wf'
