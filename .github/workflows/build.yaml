@@ -360,6 +360,27 @@ jobs:
         with:
           path: sing_images
           name: pango
+
+      - name: Gather bcftools singularity image
+        id: download
+        uses: actions/download-artifact@v2
+        with:
+          path: sing_images
+          name: bcftools
+
+      - name: Gather fn4-upload singularity image
+        id: download
+        uses: actions/download-artifact@v2
+        with:
+          path: sing_images
+          name: fn4-upload
+
+      - name: Gather HRR singularity image
+        id: download
+        uses: actions/download-artifact@v2
+        with:
+          path: sing_images
+          name: HRR
       
       - name: 'Get latest viridian image'
         run: |
@@ -440,7 +461,6 @@ jobs:
           echo "viridian $(singularity exec ${{steps.download.outputs.download-path}}/viridian_workflow_${VIRIDIAN_VERSION}.img viridian_workflow --version)" >> versions.txt
           echo "nextclade $(singularity exec ${{steps.download.outputs.download-path}}/nextclade_${RELEASE_VERSION}.sif nextclade -V)" >> versions.txt
           echo "$(singularity exec ${{steps.download.outputs.download-path}}/pango_${RELEASE_VERSION}.sif pangolin -v)" >> versions.txt
-          echo "aln2type $(docker run oxfordmmm/aln2type:${RELEASE_VERSION} /bin/sh -c 'cd aln2type/ && git describe --tags')" >> versions.txt
           echo "bcftools $(singularity exec ${{steps.download.outputs.download-path}}/bcftools_${RELEASE_VERSION}.sif bcftools --version-only)" >> versions.txt
           echo "fn4-upload $(singularity exec ${{steps.download.outputs.download-path}}/fn4_upload_${RELEASE_VERSION}.sif samtools version | head -1)" >> versions.txt
           echo "fn4-upload $(singularity exec ${{steps.download.outputs.download-path}}/fn4_upload_${RELEASE_VERSION}.sif pip freeze | grep biopython)" >> versions.txt
