@@ -380,7 +380,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           path: sing_images
-          name: HRR
+          name: oci_pipeline
       
       - name: 'Get latest viridian image'
         run: |
