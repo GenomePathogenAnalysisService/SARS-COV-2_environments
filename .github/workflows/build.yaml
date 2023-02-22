@@ -368,12 +368,12 @@ jobs:
           path: sing_images
           name: bcftools
 
-      - name: Gather fn4-upload singularity image
+      - name: Gather fn4_upload singularity image
         id: download_fn4-upload
         uses: actions/download-artifact@v2
         with:
           path: sing_images
-          name: fn4-upload
+          name: fn4_upload
 
       - name: Gather HRR singularity image
         id: download_HRR
