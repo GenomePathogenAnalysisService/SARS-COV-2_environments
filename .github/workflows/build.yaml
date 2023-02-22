@@ -355,28 +355,28 @@ jobs:
           name: nextclade
 
       - name: Gather pango singularity image
-        id: download
+        id: download_pango
         uses: actions/download-artifact@v2
         with:
           path: sing_images
           name: pango
 
       - name: Gather bcftools singularity image
-        id: download
+        id: download_bcftools
         uses: actions/download-artifact@v2
         with:
           path: sing_images
           name: bcftools
 
       - name: Gather fn4-upload singularity image
-        id: download
+        id: download_fn4-upload
         uses: actions/download-artifact@v2
         with:
           path: sing_images
           name: fn4-upload
 
       - name: Gather HRR singularity image
-        id: download
+        id: download_HRR
         uses: actions/download-artifact@v2
         with:
           path: sing_images
